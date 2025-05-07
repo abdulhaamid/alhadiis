@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "ListHadiths";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model IEnumerable<Hadith>
+
+<div class="container mt-4">
+    <!-- Üst Araç Çubuğu -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-end">
+                @Html.ActionLink("Yeni Hadis Ekle", "AddHadith", null,
+                         new { @class = "btn btn-primary btn-lg shadow-sm", @style = "border-radius: 20px;" })
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste Kartı -->
+    <div class="card shadow-lg">
+        <div class="card-header bg-gradient-primary text-white">
+            <h3 class="mb-0"><i class="fas fa-book-open me-3"></i>Hadis Arşivi</h3>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <!-- Tablo Başlığı -->
+                    <thead class="table-light">
+                        <tr>
+                            <th class="fw-bold text-nowrap">Yıl</th>
+                            <th class="fw-bold">Ay</th>
+                            <th class="fw-bold">Hafta</th>
+                            <th class="fw-bold">Dil</th>
+                            <th class="fw-bold">İçerik</th>
+                            <th class="fw-bold text-end">İşlemler</th>
+                        </tr>
+                    </thead>
+
+                    <!-- Tablo İçeriği -->
+                    <tbody>
+                        @foreach (var hadith in Model)
+                        {
+                            <tr class="position-relative">
+                                <td class="text-nowrap">
+                                    <span class="badge bg-primary rounded-pill px-3">
+                                        @hadith.Week.Month.Year.YearNumber
+                                    </span>
+                                </td>
+                                <td>@hadith.Week.Month.MonthName</td>
+                                <td>@hadith.Week.WeekNumber</td>
+                                <td>
+                                    <span class="badge @GetLanguageBadge(hadith.Language.Name)">
+                                        @hadith.Language.Name
+                                    </span>
+                                </td>
+                                <td style="max-width: 500px;">
+                                    <div class="content-preview" data-bs-toggle="tooltip"
+                                         title="@hadith.Content"
+                                         style="@GetTextStyle(hadith.Language.Name)">
+                                        @hadith.Content
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group" role="group">
+                                        <a href="@Url.Action("EditHadith", new { id = hadith.Id })"
+                                           class="btn btn-sm btn-outline-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="@Url.Action("DeleteHadith", new { id = hadith.Id })"
+                                           class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetLanguageBadge(string language)
+    {
+        return language switch
+        {
+            "Turkish" => "bg-success",
+            "Arabic" => "bg-danger",
+            "Ottoman" => "bg-dark",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetTextStyle(string language)
+    {
+        var style = "overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;";
+
+        if (language == "Arabic")
+            style += "font-family: 'Amiri', serif; direction: rtl;";
+        else if (language == "Ottoman")
+            style += "font-family: 'Noto Nastaliq Urdu', serif;";
+
+        return style;
+    }
+}
+
+<style>
+    .card-header.bg-gradient-primary {
+        background: linear-gradient(45deg, #4b6cb7, #182848);
+    }
+
+    .content-preview {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .content-preview:hover {
+            -webkit-line-clamp: unset;
+            background: rgba(0,0,0,0.03);
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(75, 108, 183, 0.05);
+    }
+</style>
+
+<!-- Gerekli JS ve CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">

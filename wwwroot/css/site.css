@@ -1,0 +1,49 @@
+/* wwwroot/css/site.css */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.navbar {
+    background: #333;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin: 0 10px;
+    }
+
+.hadis-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.hadis-reference {
+    font-weight: bold;
+}
+
+.language-tabs {
+    margin: 20px 0;
+}
+
+    .language-tabs button {
+        padding: 10px;
+        margin-right: 5px;
+    }
+
+    .language-tabs .active {
+        background: #007bff;
+        color: white;
+    }
+
+.archive-selector select {
+    margin-right: 10px;
+    padding: 5px;
+}

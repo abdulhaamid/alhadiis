@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "DeleteHadith";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model Hadith
+
+<h2>Hadis Sil</h2>
+
+<div>
+    <h4>Silmek istediğinize emin misiniz?</h4>
+    <dl>
+        <dt>Yıl</dt>
+        <dd>@Model.Week.Month.Year.YearNumber</dd>
+        <dt>Ay</dt>
+        <dd>@Model.Week.Month.MonthName</dd>
+        <dt>Hafta</dt>
+        <dd>@Model.Week.WeekNumber</dd>
+        <dt>Dil</dt>
+        <dd>@Model.Language.Name</dd>
+        <dt>İçerik</dt>
+        <dd>@Model.Content</dd>
+    </dl>
+</div>
+
+<form asp-action="DeleteHadith" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit">Sil</button>
+    @Html.ActionLink("İptal", "ListHadiths")
+</form>
+
+

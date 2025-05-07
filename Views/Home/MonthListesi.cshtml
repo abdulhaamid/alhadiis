@@ -1,0 +1,104 @@
+﻿@model IEnumerable<Alhadis.Models.Month>
+@{
+    ViewData["Title"] = "Year";
+  
+}
+
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 Takvim</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .month-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none !important;
+            color: inherit !important;
+            border: 2px solid transparent;
+        }
+
+            .month-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 7px 14px rgba(0,0,0,0.15);
+                background: #e9ecef;
+                color: #0d6efd !important;
+            }
+
+            .month-card:active {
+                transform: scale(0.98);
+                background: #0d6efd !important;
+                color: white !important;
+                border-color: #0a58ca;
+            }
+
+        .nav-button {
+            background: #0d6efd;
+            color: white !important;
+            padding: 12px 25px;
+            border-radius: 10px;
+            margin: 10px;
+            text-decoration: none !important;
+            transition: all 0.2s ease;
+        }
+
+            .nav-button:hover {
+                background: #0b5ed7;
+                transform: translateY(-2px);
+            }
+
+        .year-header {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 30px 0;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <!-- Yıl Başlığı -->
+        <div class="year-header">2025</div>
+
+        <!-- Aylar Grid -->
+      
+
+        <div class="row">
+            @foreach (var month in Model)
+            {
+                <div class="col-md-3 col-6">
+                    <!-- Linkte month.Id veya ihtiyaca göre başka bir parametre kullanılabilir -->
+                    <a href="/Home/Month/@month.Id/" class="month-card">@month.MonthName </a>
+                </div>
+            }
+        </div>
+
+
+        <!-- Alt Navigasyon -->
+       
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+

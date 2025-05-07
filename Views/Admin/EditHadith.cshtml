@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "EditHadith";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model Hadith
+
+<h2>Hadis Güncelle</h2>
+
+<form asp-action="EditHadith" method="post">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="hidden" name="LanguageId" value="@Model.Language.Id" />
+    <input type="hidden" name="WeekId" value="@Model.Week.Id" />
+    <div>
+        <label>Yıl:</label>
+        <span>@Model.Week.Month.Year.YearNumber</span>
+    </div>
+    <div>
+        <label>Ay:</label>
+        <span>@Model.Week.Month.MonthName</span>
+    </div>
+    <div>
+        <label>Hafta:</label>
+        <span>@Model.Week.WeekNumber</span>
+    </div>
+    <div>
+        <label>Dil:</label>
+        <span>@Model.Language.Name</span>
+    </div>
+    <div>
+        <label>İçerik:</label>
+        <textarea name="Content" required>@Model.Content</textarea>
+    </div>
+    <button type="submit">Güncelle</button>
+</form>
+
+
+

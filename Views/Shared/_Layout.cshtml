@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Hadis Uygulaması</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2A5C82;
+            --secondary-color: #5AA897;
+            --text-color: #2C3E50;
+        }
+
+        body {
+            background: #f8f9fa;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding-bottom: 80px; /* Alt menünün üstünde içerik için yer bırak */
+        }
+
+        /* Üst Menü */
+        .top-navbar {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 0;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Alt Navigasyon */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+            padding: 12px 0;
+            z-index: 1001;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .nav-link.active {
+                color: var(--primary-color);
+            }
+
+            .nav-link i {
+                font-size: 1.4rem;
+                margin-bottom: 6px;
+                display: block;
+                transition: transform 0.3s ease;
+            }
+    </style>
+</head>
+<body>
+
+    <!-- Üst Başlık -->
+    <div class="top-navbar">
+        Hadis Uygulaması
+    </div>
+
+    <div class="container mt-4">
+        @RenderBody()
+    </div>
+
+    <!-- Alt Navigasyon -->
+    <nav class="bottom-nav">
+        <div class="container">
+            <div class="nav d-flex justify-content-between">
+                <a class="nav-link @(ViewData["ActivePage"] == "Home" ? "active" : "")" href="@Url.Action("Index", "Home")">
+                    <i class="fas fa-home"></i>
+                    Bu Ay
+                </a>
+                <a class="nav-link @(ViewData["ActivePage"] == "Archive" ? "active" : "")" href="@Url.Action("ListHadiths", "Admin")">
+                    <i class="fas fa-archive"></i>
+                    Arşiv
+                </a>
+                <a class="nav-link @(ViewData["ActivePage"] == "Settings" ? "active" : "")" href="@Url.Action("Settings", "Home")">
+                    <i class="fas fa-cog"></i>
+                    Ayarlar
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+﻿@* @model Hadith
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Hadis Uygulaması</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2A5C82;
+            --secondary-color: #5AA897;
+            --accent-color: #FFD700;
+            --text-color: #2C3E50;
+            --bg-gradient: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            padding-bottom: 160px;
+            margin: 0;
+        }
+
+        /* Sabit Hafta Sekmeleri */
+        .week-tabs {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: white;
+            z-index: 1002;
+            padding: 10px 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+            .week-tabs .nav-pills .nav-link {
+                color: var(--text-color);
+                font-weight: 600;
+                border-radius: 8px;
+                margin: 0 5px;
+                transition: all 0.3s;
+            }
+
+                .week-tabs .nav-pills .nav-link.active {
+                    background: var(--primary-color);
+                    color: white !important;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 6px rgba(42,92,130,0.2);
+                }
+
+        /* İçerik Konteyneri */
+        .content-container {
+            margin-top: 70px;
+        }
+
+        /* Hadis Kartı */
+        .hadis-card {
+            background: white;
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .hadis-content {
+            padding: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            position: relative;
+        }
+
+        .hadis-reference {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        /* Archive Seçiciler */
+        .archive-selector select {
+            margin-right: 10px;
+        }
+
+        /* Dil Sekmeleri */
+        .language-tabs {
+            position: fixed;
+            bottom: 100px;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 12px 0;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+        }
+
+            .language-tabs .nav-link {
+                color: var(--text-color);
+                font-weight: 500;
+                padding: 12px 20px;
+                transition: all 0.3s;
+            }
+
+                .language-tabs .nav-link.active {
+                    color: var(--primary-color);
+                    border-bottom: 3px solid var(--primary-color);
+                }
+
+        /* Alt Navigasyon */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
+            padding: 16px 0;
+            z-index: 1001;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+            .nav-link.active {
+                color: var(--primary-color);
+            }
+
+            .nav-link i {
+                font-size: 1.4rem;
+                margin-bottom: 6px;
+                display: block;
+                transition: transform 0.3s ease;
+            }
+    </style>
+</head>
+<body>
+
+    <!-- Sabit Hafta Sekmeleri -->
+    <div class="week-tabs">
+        <ul class="nav nav-pills justify-content-center mb-0">
+            @foreach (var week in ViewBag.Weeks)
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(week.WeekNumber == ViewBag.SelectedWeek ? "active" : "")" href="javascript:void(0);" onclick="selectWeek(@week.WeekNumber)">
+                        @week.WeekNumber. HAFTA
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="container content-container">
+        <!-- Yıl, Ay, Hafta Seçimi -->
+        <div class="archive-selector mb-3">
+            <select id="yearSelect" class="form-select d-inline-block w-auto" onchange="updateHadith()">
+                @foreach (var year in ViewBag.Years)
+                {
+                    <option value="@year.YearNumber" selected="@(year.YearNumber == ViewBag.SelectedYear ? "selected" : "")">@year.YearNumber</option>
+                }
+            </select>
+            <select id="monthSelect" class="form-select d-inline-block w-auto" onchange="updateHadith()">
+                @foreach (var month in ViewBag.Months)
+                {
+                    <option value="@month.Id" selected="@(month.Id == ViewBag.SelectedMonth ? "selected" : "")">@month.MonthName</option>
+                }
+            </select>
+            <select id="weekSelect" class="form-select d-inline-block w-auto" onchange="updateHadith()">
+                @foreach (var week in ViewBag.Weeks)
+                {
+                    <option value="@week.WeekNumber" selected="@(week.WeekNumber == ViewBag.SelectedWeek ? "selected" : "")">@week.WeekNumber. Week</option>
+                }
+            </select>
+        </div>
+
+        <!-- Hadis Kartı -->
+        <div class="hadis-card">
+            @if (Model != null)
+            {
+                <div class="hadis-content">
+                    <span class="hadis-reference">
+                        @Model.Week.Month.Year.YearNumber - @Model.Week.Month.MonthName - @Model.Week.WeekNumber. HAFTA
+                    </span>
+                    <p>@Model.Content</p>
+                </div>
+            }
+            else
+            {
+                <div class="hadis-content">
+                    <p>Bu hafta için hadis bulunamadı.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Dil Sekmeleri -->
+    <div class="language-tabs">
+        <ul class="nav nav-pills justify-content-center">
+            @foreach (var language in ViewBag.Languages)
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(language.Id == ViewBag.SelectedLanguageId ? "active" : "")" href="javascript:void(0);" onclick="changeLanguage(@language.Id)">
+                        @language.Name
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Yıl, ay, hafta seçimi sonrası hadis güncelleme
+        function updateHadith() {
+          const year = document.getElementById('yearSelect').value;
+          const month = document.getElementById('monthSelect').value;
+          const week = document.getElementById('weekSelect').value;
+          // Mevcut dil seçimini ViewBag üzerinden alıyoruz
+          const languageId = @ViewBag.SelectedLanguageId;
+          fetch(`/Home/Index?year=${year}&month=${month}&week=${week}&languageId=${languageId}`)
+            .then(response => response.text())
+            .then(data => {
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(data, 'text/html');
+              const hadisCard = doc.querySelector('.hadis-card').innerHTML;
+              document.querySelector('.hadis-card').innerHTML = hadisCard;
+            });
+        }
+
+        // Dil değiştirme
+        function changeLanguage(languageId) {
+          const year = document.getElementById('yearSelect').value;
+          const month = document.getElementById('monthSelect').value;
+          const week = document.getElementById('weekSelect').value;
+          fetch(`/Home/Index?year=${year}&month=${month}&week=${week}&languageId=${languageId}`)
+            .then(response => response.text())
+            .then(data => {
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(data, 'text/html');
+              const hadisCard = doc.querySelector('.hadis-card').innerHTML;
+              document.querySelector('.hadis-card').innerHTML = hadisCard;
+            });
+        }
+
+        // Sabit hafta sekmesi tıklama işlemi
+        function selectWeek(weekNumber) {
+          document.getElementById('weekSelect').value = weekNumber;
+          updateHadith();
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+ *@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Hadis Uygulaması</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/hadith.css" />
+</head>
+<body>
+
+  <!-- Sabit Hafta Sekmeleri -->
+  <div class="week-tabs">
+    <div class="container">
+      <ul class="nav nav-pills justify-content-center mb-0">
+        @foreach(var week in ViewBag.Weeks)
+        {
+          <li class="nav-item">
+            <a class="nav-link @(week.WeekNumber == ViewBag.SelectedWeek ? "active" : "")" href="javascript:void(0);" onclick="selectWeek(this, @week.WeekNumber)">
+              @week.WeekNumber. HAFTA
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="container content-container">
+    <!-- Yıl, Ay Seçimi -->
+    <div class="archive-selector">
+      <select id="yearSelect" class="form-select" onchange="updateHadith()">
+        <option value="2025" selected>2025</option>
+        @foreach (var year in ViewBag.Years)
+        {
+          <option value="@year.YearNumber">@year.YearNumber</option>
+        }
+      </select>
+      <select id="monthSelect" class="form-select" onchange="updateHadith()">
+        @foreach (var month in ViewBag.Months)
+        {
+          <option value="@month.Id" selected="@(month.Id == ViewBag.SelectedMonth ? "selected" : "")">@month.MonthName</option>
+        }
+      </select>
+    </div>
+
+    <!-- Hadis Kartı -->
+    <div class="hadis-card">
+      @if (Model != null)
+      {
+        <div class="hadis-content">
+          <span class="hadis-reference">
+            @Model.Week.Month.Year.YearNumber - @Model.Week.Month.MonthName - @Model.Week.WeekNumber. HAFTA
+          </span>
+          <p>@Model.Content</p>
+        </div>
+      }
+      else
+      {
+        <div class="hadis-content">
+          <p>Bu hafta için hadis bulunamadı.</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Dil Sekmeleri -->
+  <div class="language-tabs">
+    <div class="container">
+      <ul class="nav nav-pills justify-content-center">
+        @foreach (var language in ViewBag.Languages)
+        {
+          <li class="nav-item">
+            <a class="nav-link @(language.Id == ViewBag.SelectedLanguageId ? "active" : "")" href="javascript:void(0);" onclick="changeLanguage(this, @language.Id)">
+              @language.Name
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Yıl, ay seçimi sonrası hadis güncelleme
+    function updateHadith() {
+      const year = document.getElementById('yearSelect').value;
+      const month = document.getElementById('monthSelect').value;
+      const week = document.querySelector('.week-tabs .nav-link.active').getAttribute('data-week');
+      const languageId = @ViewBag.SelectedLanguageId;
+      fetch(`/Home/Index?year=${year}&month=${month}&week=${week}&languageId=${languageId}`)
+        .then(response => response.text())
+        .then(data => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data, 'text/html');
+          const hadisCard = doc.querySelector('.hadis-card').innerHTML;
+          document.querySelector('.hadis-card').innerHTML = hadisCard;
+        });
+    }
+    // Dil değiştirme: parametre olarak element ve languageId alınıyor
+    function changeLanguage(element, languageId) {
+      // Tüm dil butonlarından aktif sınıfı kaldır
+      document.querySelectorAll('.language-tabs .nav-link').forEach(function(btn) {
+        btn.classList.remove('active');
+      });
+      // Tıklanan butona aktif sınıfı ekle
+      element.classList.add('active');
+      const year = document.getElementById('yearSelect').value;
+      const month = document.getElementById('monthSelect').value;
+      const week = document.querySelector('.week-tabs .nav-link.active').getAttribute('data-week');
+      fetch(`/Home/Index?year=${year}&month=${month}&week=${week}&languageId=${languageId}`)
+        .then(response => response.text())
+        .then(data => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data, 'text/html');
+          const hadisCard = doc.querySelector('.hadis-card').innerHTML;
+          document.querySelector('.hadis-card').innerHTML = hadisCard;
+        });
+    }
+    // Sabit hafta sekmesi tıklama işlemi: element referansı da alınıyor
+    function selectWeek(element, weekNumber) {
+      // Tüm hafta butonlarından aktif sınıfı kaldır
+      document.querySelectorAll('.week-tabs .nav-link').forEach(function(btn) {
+        btn.classList.remove('active');
+      });
+      // Tıklanan butona aktif sınıfı ekle
+      element.classList.add('active');
+      element.setAttribute('data-week', weekNumber);
+      updateHadith();
+    }
+  </script>
+</body>
+</html>
+
