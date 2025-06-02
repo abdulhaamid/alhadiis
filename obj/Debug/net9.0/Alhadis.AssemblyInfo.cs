@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Alhadis")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+05cf50e5027fed06d672c4bd33816d33b2b4f397")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6559a2c68f4a0f321e4f5742eab3fcd3c8507c64")]
 [assembly: System.Reflection.AssemblyProductAttribute("Alhadis")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Alhadis")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
