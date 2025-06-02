@@ -262,8 +262,6 @@ C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\Alha
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\scopedcss\bundle\Alhadis.styles.css
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\scopedcss\projectbundle\Alhadis.bundle.scp.css
-C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\compressed\kri0amtzxq-22598xbe5q.gz
-C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\compressed\ityjpm9qvb-iyjmeq01gg.gz
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\compressed\bc7i47pnnu-61n19gt1b8.gz
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\compressed\mzp4vlpm8n-xtxxf3hu2r.gz
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\compressed\t0d7ub4v77-t1cqhe9u97.gz
@@ -330,12 +328,6 @@ C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\comp
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets\msbuild.Alhadis.Microsoft.AspNetCore.StaticWebAssets.props
-C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets\msbuild.Alhadis.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
-C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets\msbuild.build.Alhadis.props
-C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets\msbuild.buildMultiTargeting.Alhadis.props
-C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets\msbuild.buildTransitive.Alhadis.props
-C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets.pack.json
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\Alhadis.csproj.Up2Date
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\Alhadis.dll
@@ -369,3 +361,8 @@ C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\bin\Debug\net9.0\runt
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\bin\Debug\net9.0\runtimes\win-arm64\native\e_sqlite3.dll
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\bin\Debug\net9.0\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\bin\Debug\net9.0\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\staticwebassets.build.json.cache
+C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\compressed\ityjpm9qvb-h9ufck9x3x.gz
+C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\obj\Debug\net9.0\compressed\kri0amtzxq-etxve1wlco.gz
+C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\bin\Debug\net9.0\Npgsql.dll
+C:\Users\hayyu\source\repos\Abdulhamid1000\Alhadis\Alhadis\bin\Debug\net9.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll

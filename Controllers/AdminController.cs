@@ -24,9 +24,9 @@ public class AdminController : Controller
         return View();
     }
 
+   
     [HttpPost]
-    [HttpPost]
-    public IActionResult AddHadith(int yearNumber, string monthName, int weekNumber, string turkishContent, string arabicContent, string ottomanContent)
+    public IActionResult AddHadith(int yearNumber, string monthName, int weekNumber, string turkishContent, string arabicContent,string oromicContent,string amharicContent)
     {
         // Yıl kontrolü ve ekleme
         var year = _context.Years.FirstOrDefault(y => y.YearNumber == yearNumber);
@@ -71,7 +71,8 @@ public class AdminController : Controller
         _context.Hadiths.AddRange(
             new Hadith { Content = turkishContent, WeekId = week.Id, LanguageId = 1 },
             new Hadith { Content = arabicContent, WeekId = week.Id, LanguageId = 2 },
-            new Hadith { Content = ottomanContent, WeekId = week.Id, LanguageId = 3 }
+            new Hadith { Content = oromicContent, WeekId = week.Id, LanguageId = 3 },
+            new Hadith { Content = amharicContent, WeekId = week.Id, LanguageId = 4 }
         );
         _context.SaveChanges();
 
@@ -113,7 +114,7 @@ public class AdminController : Controller
 
     // POST: EditHadith
     [HttpPost]
-    
+
     public IActionResult EditHadith(Hadith model)
     {
         // Veritabanından mevcut hadisi getiriyoruz

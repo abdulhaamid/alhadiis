@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] - Hadis Uygulaması</title>
+    <title>@ViewData["Title"] - HAFTALIK HADİS</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -42,12 +42,12 @@
             z-index: 1001;
         }
 
-        .nav-item {
+        .nav-item { /* Bu sınıf doğrudan kullanılmıyor gibi ama alt navigasyon için genel bir stil olabilir */
             flex: 1;
             text-align: center;
         }
 
-        .nav-link {
+        .nav-link { /* Layout içindeki .nav-link için genel bir tanım, alt navigasyonda özelleştirilecek */
             color: var(--text-color);
             font-size: 0.9rem;
             font-weight: 500;
@@ -68,16 +68,14 @@
 </head>
 <body>
 
-    <!-- Üst Başlık -->
     <div class="top-navbar">
-        Hadis Uygulaması
+        Haftalık Hadis
     </div>
 
     <div class="container mt-4">
         @RenderBody()
     </div>
 
-    <!-- Alt Navigasyon -->
     <nav class="bottom-nav">
         <div class="container">
             <div class="nav d-flex justify-content-between">

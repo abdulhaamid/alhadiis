@@ -13,7 +13,7 @@ body {
     padding-bottom: 80px; /* Alt navigasyon için boşluk */
 }
 
-/* Üst Menü */
+/* Üst Menü (Layout'tan stil alabilir, burada tekrar tanımlanmış) */
 .top-navbar {
     background: var(--primary-color);
     color: white;
@@ -23,7 +23,7 @@ body {
     font-weight: bold;
 }
 
-/* Alt Navigasyon */
+/* Alt Navigasyon (Layout'tan stil alabilir, burada tekrar tanımlanmış) */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -65,7 +65,7 @@ body {
     width: 100%;
     background: rgba(255,255,255,0.95);
     z-index: 1050;
-    padding: 8px 0; /* Daha az boşluk için padding düşürüldü */
+    padding: 8px 0;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
@@ -94,7 +94,7 @@ body {
 
 /* İçerik Konteyneri */
 .content-container {
-    margin-top: 80px; /* Hafta sekmeleri için boşluk azaltıldı */
+    margin-top: 55px;
     padding: 0 15px;
 }
 
@@ -103,10 +103,12 @@ body {
     background: #fff;
     border-radius: 20px;
     border: none;
-    padding: 30px;
-    margin: 30px 0;
+    padding: 25px;
+    margin: 15px 0;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex; /* İçeriğin (referans ve content) dikeyde düzgün yayılmasına yardımcı olur */
+    flex-direction: column; /* İç elemanları dikey sıralar */
 }
 
     .hadis-card:hover {
@@ -118,22 +120,49 @@ body {
     font-size: 1.15rem;
     line-height: 1.8;
     position: relative;
+    flex-grow: 1; /* Eğer kart içinde başka elemanlar varsa, bu alanın kalan boşluğu doldurmasını sağlar */
+    min-height: 0; /* flex-grow ile birlikte bazen küçülme sorunlarını çözer */
+    /* Uzun hadis metinleri için maksimum yükseklik ve dikey kaydırma */
+    max-height: 45vh; /* Ekran yüksekliğinin %45'i kadar. Bu değer ihtiyaca göre ayarlanabilir. */
+    overflow-y: auto; /* İçerik max-height'i aşarsa dikey scrollbar gösterir */
+    /* Kaydırma çubuğu stilleri */
+    scrollbar-width: thin; /* Firefox için */
+    scrollbar-color: var(--primary-color) rgba(0,0,0,0.05); /* Kaydırma çubuğu rengi ve arka planı */
 }
+
+    .hadis-content::-webkit-scrollbar { /* Webkit tabanlı tarayıcılar (Chrome, Safari, Edge) */
+        width: 8px;
+    }
+
+    .hadis-content::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.05);
+        border-radius: 4px;
+    }
+
+    .hadis-content::-webkit-scrollbar-thumb {
+        background-color: var(--primary-color);
+        border-radius: 4px;
+    }
+
+    .hadis-content p { /* Hadis metninin olduğu paragraf için */
+        margin-bottom: 0; /* Scroll edilebilir alanda en alttaki gereksiz boşluğu kaldırır */
+    }
 
 .hadis-reference {
     color: var(--secondary-color);
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* İçerikle referans arası boşluk */
     font-size: 1.1rem;
+    flex-shrink: 0; /* Bu alanın küçülmemesini sağlar */
 }
 
 /* Archive Seçiciler */
 .archive-selector {
     display: flex;
     gap: 10px;
-    flex-wrap: nowrap; /* Dropdown’lar yan yana */
+    flex-wrap: nowrap;
     justify-content: center;
-    margin-bottom: 10px; /* Boşluk azaltıldı */
+    margin-bottom: 15px;
 }
 
     .archive-selector select {
@@ -152,7 +181,7 @@ body {
 /* Dil Sekmeleri (Sabit) */
 .language-tabs {
     position: fixed;
-    bottom: 80px; /* Alt navigasyondan hemen yukarıda */
+    bottom: 80px;
     width: 100%;
     background: rgba(255,255,255,0.98);
     backdrop-filter: blur(12px);
@@ -160,13 +189,16 @@ body {
     z-index: 1050;
     padding: 12px 0;
     box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+    overflow-x: auto; /* Taşma durumunda yatay kaydırma için */
+    white-space: nowrap; /* Tek satırda tutar */
 }
 
     .language-tabs .nav-pills {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap; /* Tek satırda */
         justify-content: center;
         gap: 10px;
+        padding: 0 15px; /* Kenarlarda boşluk */
     }
 
     .language-tabs .nav-link {
@@ -174,7 +206,7 @@ body {
         font-weight: 500;
         padding: 10px 20px;
         transition: color 0.3s ease;
-        margin-bottom: 5px;
+        /* margin-bottom kaldırıldı; tek satırda kalacak */
     }
 
         .language-tabs .nav-link.active {
@@ -184,12 +216,11 @@ body {
 
 /* Responsive Düzenlemeler */
 @media (max-width: 768px) {
-    /* Hafta sekmeleri mobilde statik olsun */
     .week-tabs {
         position: static;
         box-shadow: none;
         padding: 10px 0;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
         .week-tabs .nav-pills {
@@ -203,9 +234,17 @@ body {
                 margin-bottom: 0;
             }
 
+    .content-container {
+        margin-top: 0;
+    }
+
     .archive-selector select {
         min-width: 100px;
         padding: 6px;
+    }
+
+    .archive-selector {
+        margin-bottom: 15px;
     }
 
     .hadis-card {
@@ -214,12 +253,24 @@ body {
     }
 
     .hadis-content {
-        font-size: 1rem;
+        font-size: 1rem; /* Mobil için yazı tipi boyutu */
     }
 
-    /* Dil sekmeleri sabit kalmaya devam ediyor, ancak küçük ekranlara uygun font/padding */
-    .language-tabs .nav-link {
-        padding: 8px 16px;
-        font-size: 0.9rem;
+    .hadis-reference {
+        font-size: 1rem; /* Mobil için referans yazı tipi boyutu */
+        margin-bottom: 10px; /* Mobil için referans alt boşluğu */
     }
+
+    .language-tabs {
+        /* Pozisyon ve sabitlik mobilde de korunuyor, herhangi bir değişiklik yok */
+    }
+
+        .language-tabs .nav-pills {
+            gap: 5px;
+        }
+
+        .language-tabs .nav-link {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
 }

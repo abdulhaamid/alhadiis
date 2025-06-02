@@ -7,7 +7,9 @@ namespace Alhadis
     {
         public static void Main(string[] args)
         {
+
             var builder = WebApplication.CreateBuilder(args);
+
            
 
 
@@ -15,12 +17,18 @@ namespace Alhadis
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<HadithDbContext>(options =>
-         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 });
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<HadithDbContext>();
+                dbContext.Database.Migrate();
+            }
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -40,6 +48,7 @@ namespace Alhadis
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
+
 
             app.Run();
         }
