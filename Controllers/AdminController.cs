@@ -1,9 +1,8 @@
-﻿// Controllers/AdminController.cs
 using Alhadis.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+namespace Alhadis.Controllers;
 
 public class AdminController : Controller
 {
@@ -14,155 +13,159 @@ public class AdminController : Controller
         _context = context;
     }
 
-    // Hadis Ekleme Sayfası
     public IActionResult AddHadith()
     {
-        ViewBag.Years = _context.Years.ToList();
-        ViewBag.Months = _context.Months.ToList();
-        ViewBag.Weeks = _context.Weeks.ToList();
-        ViewBag.Languages = _context.Languages.ToList();
-        return View();
+        ViewData["ActivePage"] = "Archive";
+        return View(new AdminAddHadithInputModel());
     }
 
-   
     [HttpPost]
-    public IActionResult AddHadith(int yearNumber, string monthName, int weekNumber, string turkishContent, string arabicContent,string oromicContent,string amharicContent)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddHadith(AdminAddHadithInputModel model)
     {
-        // Yıl kontrolü ve ekleme
-        var year = _context.Years.FirstOrDefault(y => y.YearNumber == yearNumber);
-        if (year == null)
+        ViewData["ActivePage"] = "Archive";
+
+        if (!ModelState.IsValid)
         {
-            year = new Year { YearNumber = yearNumber };
+            return View(model);
+        }
+
+        var cleanedMonthName = model.MonthName.Trim();
+        var trimmedTurkish = model.TurkishContent.Trim();
+        var trimmedArabic = model.ArabicContent.Trim();
+        var trimmedOromic = model.OromicContent.Trim();
+        var trimmedAmharic = model.AmharicContent.Trim();
+
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+
+        var year = await _context.Years.FirstOrDefaultAsync(y => y.YearNumber == model.YearNumber);
+        if (year is null)
+        {
+            year = new Year { YearNumber = model.YearNumber };
             _context.Years.Add(year);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        // Ay kontrolü ve ekleme
-        var month = _context.Months.FirstOrDefault(m => m.MonthName == monthName && m.YearId == year.Id);
-        if (month == null)
+        var month = await _context.Months.FirstOrDefaultAsync(m => m.YearId == year.Id && m.MonthName == cleanedMonthName);
+        if (month is null)
         {
-            month = new Month { MonthName = monthName, YearId = year.Id };
+            month = new Month { MonthName = cleanedMonthName, YearId = year.Id };
             _context.Months.Add(month);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        // Hafta kontrolü ve ekleme
-        var week = _context.Weeks.FirstOrDefault(w => w.WeekNumber == weekNumber && w.MonthId == month.Id);
-        if (week == null)
+        var week = await _context.Weeks.FirstOrDefaultAsync(w => w.MonthId == month.Id && w.WeekNumber == model.WeekNumber);
+        if (week is null)
         {
-            week = new Week { WeekNumber = weekNumber, MonthId = month.Id };
+            week = new Week { MonthId = month.Id, WeekNumber = model.WeekNumber };
             _context.Weeks.Add(week);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        // Kontrol: İlgili hafta için zaten hadis eklenmiş mi?
-        if (_context.Hadiths.Any(h => h.WeekId == week.Id))
+        var alreadyExists = await _context.Hadiths.AnyAsync(h => h.WeekId == week.Id);
+        if (alreadyExists)
         {
-            ModelState.AddModelError("", "Bir hadis bir kere eklenebilir, ikinci olamaz.");
-            // Formda kullanılmak üzere ViewBag'leri yeniden dolduruyoruz.
-            ViewBag.Years = _context.Years.ToList();
-            ViewBag.Months = _context.Months.ToList();
-            ViewBag.Weeks = _context.Weeks.ToList();
-            ViewBag.Languages = _context.Languages.ToList();
-            return View();
+            ModelState.AddModelError(string.Empty, "Bu yıl/ay/hafta için hadis zaten mevcut. Lütfen farklı bir kayıt seçin.");
+            return View(model);
         }
 
-        // Hadis ekleme (3 dilde)
-        _context.Hadiths.AddRange(
-            new Hadith { Content = turkishContent, WeekId = week.Id, LanguageId = 1 },
-            new Hadith { Content = arabicContent, WeekId = week.Id, LanguageId = 2 },
-            new Hadith { Content = oromicContent, WeekId = week.Id, LanguageId = 3 },
-            new Hadith { Content = amharicContent, WeekId = week.Id, LanguageId = 4 }
-        );
-        _context.SaveChanges();
+        var hadiths = new List<Hadith>
+        {
+            new() { Content = trimmedTurkish, WeekId = week.Id, LanguageId = 1 },
+            new() { Content = trimmedArabic, WeekId = week.Id, LanguageId = 2 },
+            new() { Content = trimmedOromic, WeekId = week.Id, LanguageId = 3 },
+            new() { Content = trimmedAmharic, WeekId = week.Id, LanguageId = 4 }
+        };
 
-        return RedirectToAction("Index", "Home");
+        _context.Hadiths.AddRange(hadiths);
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        TempData["SuccessMessage"] = "Hadis başarıyla eklendi.";
+        return RedirectToAction(nameof(ListHadiths));
     }
 
-    public IActionResult ListHadiths()
+    public async Task<IActionResult> ListHadiths()
     {
-        // Hadisleri ilgili ilişkileriyle birlikte çekiyoruz.
-        var hadiths = _context.Hadiths
+        ViewData["ActivePage"] = "Archive";
+
+        var hadiths = await _context.Hadiths
             .Include(h => h.Week)
                 .ThenInclude(w => w.Month)
                     .ThenInclude(m => m.Year)
             .Include(h => h.Language)
-            .OrderBy(h => h.Week.Month.Year.YearNumber)
-            .ThenBy(h => h.Week.Month.MonthName)
+            .AsNoTracking()
+            .OrderByDescending(h => h.Week.Month.Year.YearNumber)
+            .ThenByDescending(h => h.Week.Month.Id)
             .ThenBy(h => h.Week.WeekNumber)
-            .ToList();
+            .ThenBy(h => h.LanguageId)
+            .ToListAsync();
 
         return View(hadiths);
     }
 
-    // GET: EditHadith
-    public IActionResult EditHadith(int id)
+    public async Task<IActionResult> EditHadith(int id)
     {
-        var hadith = _context.Hadiths
+        ViewData["ActivePage"] = "Archive";
+
+        var hadith = await _context.Hadiths
             .Include(h => h.Week)
                 .ThenInclude(w => w.Month)
                     .ThenInclude(m => m.Year)
             .Include(h => h.Language)
-            .FirstOrDefault(h => h.Id == id);
+            .FirstOrDefaultAsync(h => h.Id == id);
 
-        if (hadith == null)
-        {
-            return NotFound();
-        }
-        return View(hadith);
+        return hadith is null ? NotFound() : View(hadith);
     }
 
-    // POST: EditHadith
     [HttpPost]
-
-    public IActionResult EditHadith(Hadith model)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditHadith(Hadith model)
     {
-        // Veritabanından mevcut hadisi getiriyoruz
-        var existingHadith = _context.Hadiths.Find(model.Id);
-        if (existingHadith == null)
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var existingHadith = await _context.Hadiths.FindAsync(model.Id);
+        if (existingHadith is null)
         {
             return NotFound();
         }
 
-        // Sadece güncelleme yapılacak alanı değiştiriyoruz
-        existingHadith.Content = model.Content;
-
-        _context.SaveChanges();
-        return RedirectToAction("ListHadiths");
+        existingHadith.Content = model.Content.Trim();
+        await _context.SaveChangesAsync();
+        TempData["SuccessMessage"] = "Hadis güncellendi.";
+        return RedirectToAction(nameof(ListHadiths));
     }
 
-
-    // GET: DeleteHadith
-    public IActionResult DeleteHadith(int id)
+    public async Task<IActionResult> DeleteHadith(int id)
     {
-        var hadith = _context.Hadiths
+        ViewData["ActivePage"] = "Archive";
+
+        var hadith = await _context.Hadiths
             .Include(h => h.Week)
                 .ThenInclude(w => w.Month)
                     .ThenInclude(m => m.Year)
             .Include(h => h.Language)
-            .FirstOrDefault(h => h.Id == id);
+            .FirstOrDefaultAsync(h => h.Id == id);
 
-        if (hadith == null)
-        {
-            return NotFound();
-        }
-        return View(hadith);
+        return hadith is null ? NotFound() : View(hadith);
     }
 
-    // POST: DeleteHadith
     [HttpPost, ActionName("DeleteHadith")]
-    public IActionResult DeleteConfirmed(int id)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var hadith = _context.Hadiths.Find(id);
-        if (hadith == null)
+        var hadith = await _context.Hadiths.FindAsync(id);
+        if (hadith is null)
         {
             return NotFound();
         }
+
         _context.Hadiths.Remove(hadith);
-        _context.SaveChanges();
-        return RedirectToAction("ListHadiths");
+        await _context.SaveChangesAsync();
+        TempData["SuccessMessage"] = "Hadis silindi.";
+        return RedirectToAction(nameof(ListHadiths));
     }
-
-
-    // Diğer CRUD işlemleri (güncelleme, silme) buraya eklenebilir
 }

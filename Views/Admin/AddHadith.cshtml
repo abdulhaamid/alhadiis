@@ -1,59 +1,68 @@
-﻿<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+@model Alhadis.Models.AdminAddHadithInputModel
+@{
+    ViewData["Title"] = "Hadis Ekle";
+}
 
-<div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h2 class="mb-0"><i class="fas fa-book-medical me-2"></i>Hadis Ekle</h2>
-        </div>
-        <div class="card-body">
-            <form asp-action="AddHadith" method="post" class="needs-validation" novalidate>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <label class="form-label">Yıl <span class="text-danger">*</span></label>
-                        <input type="number" name="yearNumber" class="form-control" placeholder="Örnek: 2023" required>
-                    </div>
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white">
+        <h2 class="h5 mb-0"><i class="fas fa-book-medical me-2"></i>Yeni Hadis Ekle</h2>
+    </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Ay <span class="text-danger">*</span></label>
-                        <input type="text" name="monthName" class="form-control" placeholder="Örnek: Mart" required>
-                    </div>
+    <div class="card-body">
+        <form asp-action="AddHadith" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Hafta (1-4) <span class="text-danger">*</span></label>
-                        <input type="number" name="weekNumber" class="form-control" min="1" max="4" placeholder="1-4 arası" required>
-                    </div>
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label asp-for="YearNumber" class="form-label"></label>
+                    <input asp-for="YearNumber" class="form-control" placeholder="2026" />
+                    <span asp-validation-for="YearNumber" class="text-danger"></span>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label">Türkçe İçerik <span class="text-danger">*</span></label>
-                    <textarea name="turkishContent" class="form-control" rows="4" placeholder="Türkçe hadis metnini giriniz..." required></textarea>
+                <div class="col-md-4">
+                    <label asp-for="MonthName" class="form-label"></label>
+                    <input asp-for="MonthName" class="form-control" placeholder="Ocak" />
+                    <span asp-validation-for="MonthName" class="text-danger"></span>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label">Arapça İçerik <span class="text-danger">*</span></label>
-                    <textarea name="arabicContent" class="form-control" rows="4" dir="rtl" style="font-family: 'Amiri', serif;" placeholder="الحديث باللغة العربية..." required></textarea>
+                <div class="col-md-4">
+                    <label asp-for="WeekNumber" class="form-label"></label>
+                    <input asp-for="WeekNumber" class="form-control" />
+                    <span asp-validation-for="WeekNumber" class="text-danger"></span>
                 </div>
+            </div>
 
-                <div class="mb-4">
-                    <label class="form-label">oromiçe İçerik <span class="text-danger">*</span></label>
-                    <textarea name="oromicContent" class="form-control" rows="4" style="font-family: 'Noto Nastaliq Urdu', serif;" placeholder="oromiçe hadis metnini giriniz..." required></textarea>
-                </div>
+            <div class="mb-3">
+                <label asp-for="TurkishContent" class="form-label"></label>
+                <textarea asp-for="TurkishContent" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="TurkishContent" class="text-danger"></span>
+            </div>
 
-                <div class="mb-4">
-                    <label class="form-label">amhariçe İçerik <span class="text-danger">*</span></label>
-                    <textarea name="amharicContent" class="form-control" rows="4" style="font-family: 'Noto Nastaliq Urdu', serif;" placeholder="oromiçe hadis metnini giriniz..." required></textarea>
-                </div>
+            <div class="mb-3">
+                <label asp-for="ArabicContent" class="form-label"></label>
+                <textarea asp-for="ArabicContent" class="form-control" rows="3" dir="rtl"></textarea>
+                <span asp-validation-for="ArabicContent" class="text-danger"></span>
+            </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-save me-2"></i>Hadisi Kaydet
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="mb-3">
+                <label asp-for="OromicContent" class="form-label"></label>
+                <textarea asp-for="OromicContent" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="OromicContent" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="AmharicContent" class="form-label"></label>
+                <textarea asp-for="AmharicContent" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="AmharicContent" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Kaydet
+            </button>
+            <a href="@Url.Action("ListHadiths")" class="btn btn-outline-secondary ms-2">Vazgeç</a>
+        </form>
     </div>
 </div>
 
-<!-- Gerekli JS dosyaları -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<partial name="_ValidationScriptsPartial" />
