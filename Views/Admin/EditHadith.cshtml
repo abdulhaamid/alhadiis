@@ -9,6 +9,7 @@
 <h2>Hadis Güncelle</h2>
 
 <form asp-action="EditHadith" method="post">
+    @Html.AntiForgeryToken()
     <input type="hidden" name="Id" value="@Model.Id" />
     <input type="hidden" name="LanguageId" value="@Model.Language.Id" />
     <input type="hidden" name="WeekId" value="@Model.Week.Id" />

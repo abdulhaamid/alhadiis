@@ -1,220 +1,178 @@
-﻿
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Modern Hadis Uygulaması</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/hadith.css" />
-</head>
-<body>
+@model Alhadis.Models.HomeIndexViewModel
+@{
+    ViewData["Title"] = "Haftalık Hadis";
+}
 
-    <div class="week-tabs">
-        <div class="container">
-            <ul class="nav nav-pills justify-content-center mb-0">
-                @if (ViewBag.Weeks != null) // ViewBag.Weeks null değilse döngüye gir
+<div class="hadith-page">
+    <div class="hero-card">
+        <h1 class="hero-title">Haftalık Hadis</h1>
+        <p class="hero-subtitle">Yıl, ay, hafta ve dil seçerek içeriği anında görüntüleyin.</p>
+    </div>
+
+    <div class="filters-card">
+        <div class="filter-group">
+            <label for="yearSelect">Yıl</label>
+            <select id="yearSelect" class="form-select">
+                @foreach (var year in Model.Years)
                 {
-                    foreach (var week in ViewBag.Weeks)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link @(week.WeekNumber == ViewBag.SelectedWeek ? "active" : "")" href="javascript:void(0);" onclick="selectWeek(this, @week.WeekNumber)">
-                                @week.WeekNumber. HAFTA
-                            </a>
-                        </li>
-                    }
+                    <option value="@year.YearNumber" selected="@(year.YearNumber == Model.SelectedYear)">@year.YearNumber</option>
                 }
-            </ul>
-        </div>
-    </div>
-
-    <div class="container content-container">
-        <div class="archive-selector">
-            @if (ViewBag.Years != null) // ViewBag.Years null değilse dropdown'ı göster
-            {
-                <select id="yearSelect" class="form-select" onchange="updateHadith()">
-                    @foreach (var year in ViewBag.Years)
-                    {
-                        // Koşul doğruysa 'selected' attribute'ünü ekle, yanlışsa hiçbir şey ekleme.
-                        <option value="@year.YearNumber" selected="@(year.YearNumber == ViewBag.SelectedYear ? "selected" : null)">@year.YearNumber</option>
-                    }
-                </select>
-            }
-            @if (ViewBag.Months != null) // ViewBag.Months null değilse dropdown'ı göster
-            {
-                <select id="monthSelect" class="form-select" onchange="updateHadith()">
-                    @foreach (var month in ViewBag.Months)
-                    {
-                        <option value="@month.Id" selected="@(month.Id == ViewBag.SelectedMonth ? "selected" : null)">@month.MonthName</option>
-                    }
-                </select>
-            }
+            </select>
         </div>
 
-        <div class="hadis-card">
-            @if (Model != null) // Model (Hadith nesnesi) null değilse içeriği göster
-            {
-                <div class="hadis-content">
-                    @if (Model.Week != null && Model.Week.Month != null && Model.Week.Month.Year != null)
-                    {
-                        <span class="hadis-reference">
-                            @Model.Week.Month.Year.YearNumber - @Model.Week.Month.MonthName - @Model.Week.WeekNumber. HAFTA
-                        </span>
-                    }
-                    <p>@Model.Content</p>
-                </div>
-            }
-            else
-            {
-                <div class="hadis-content">
-                    <p>Bu hafta için hadis bulunamadı veya seçili kriterlere uygun veri yok.</p>
-                </div>
-            }
-        </div>
-    </div>
-
-    <div class="language-tabs">
-        <div class="container">
-            <ul class="nav nav-pills justify-content-center">
-                @if (ViewBag.Languages != null) // ViewBag.Languages null değilse döngüye gir
+        <div class="filter-group">
+            <label for="monthSelect">Ay</label>
+            <select id="monthSelect" class="form-select">
+                @foreach (var month in Model.Months)
                 {
-                    foreach (var language in ViewBag.Languages)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link @(language.Id == ViewBag.SelectedLanguageId ? "active" : "")" href="javascript:void(0);" onclick="changeLanguage(this, @language.Id)">
-                                @language.Name
-                            </a>
-                        </li>
-                    }
+                    <option value="@month.Id" selected="@(month.Id == Model.SelectedMonthId)">@month.MonthName</option>
                 }
-            </ul>
+            </select>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Yıl veya ay seçimi değiştiğinde hadisi ve hafta sekmelerini günceller.
-        // Her zaman varsayılan olarak 1. haftayı ve Arapça (Id=2) dilini hedefler.
-        function updateHadith() {
-            const year = document.getElementById('yearSelect').value;
-            const month = document.getElementById('monthSelect').value;
-            const languageId = 2; // Dil Arapça olarak sabitlenmiş.
-            const defaultWeek = 1; // Yıl/Ay değiştiğinde her zaman 1. hafta seçilir.
+    <div class="week-tabs" id="weekTabs">
+        @foreach (var week in Model.Weeks)
+        {
+            <button type="button"
+                    class="chip-btn @(week.WeekNumber == Model.SelectedWeekNumber ? "active" : string.Empty)"
+                    data-week="@week.WeekNumber">
+                @week.WeekNumber. Hafta
+            </button>
+        }
+    </div>
 
-            // Dil sekmelerinde Arapça'yı aktif yap (bu bölüm fetch ile güncellenmediği için manuel yapılır)
-            document.querySelectorAll('.language-tabs .nav-link').forEach(function(btn) {
-                btn.classList.remove('active');
-            });
-            const arabicBtn = document.querySelector('.language-tabs .nav-link[onclick*="' + languageId + '"]');
-            if (arabicBtn) {
-                arabicBtn.classList.add('active');
-            }
+    <div class="hadith-card" id="hadithCard">
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="alert alert-warning mb-0">@Model.ErrorMessage</div>
+        }
+        else if (Model.Hadith is null)
+        {
+            <div class="empty-state">Seçili filtreler için hadis bulunamadı.</div>
+        }
+        else
+        {
+            <div class="hadith-reference" id="hadithReference">
+                @Model.Hadith.Week.Month.Year.YearNumber - @Model.Hadith.Week.Month.MonthName - @Model.Hadith.Week.WeekNumber. Hafta
+            </div>
+            <p class="hadith-content" id="hadithContent">@Model.Hadith.Content</p>
+        }
+    </div>
 
-            fetch(`/Home/Index?year=${year}&month=${month}&week=${defaultWeek}&languageId=${languageId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(data, 'text/html');
+    <div class="language-tabs" id="languageTabs">
+        @foreach (var language in Model.Languages)
+        {
+            <button type="button"
+                    class="chip-btn @(language.Id == Model.SelectedLanguageId ? "active" : string.Empty)"
+                    data-language="@language.Id">
+                @language.Name
+            </button>
+        }
+    </div>
+</div>
 
-                    const hadisCardElement = doc.querySelector('.hadis-card');
-                    if (hadisCardElement) {
-                        document.querySelector('.hadis-card').innerHTML = hadisCardElement.innerHTML;
-                    }
+@section Scripts {
+<script>
+    const state = {
+        selectedYear: @Model.SelectedYear,
+        selectedMonthId: @Model.SelectedMonthId,
+        selectedWeekNumber: @Model.SelectedWeekNumber,
+        selectedLanguageId: @Model.SelectedLanguageId
+    };
 
-                    const weekTabsElement = doc.querySelector('.week-tabs');
-                    if (weekTabsElement) {
-                        document.querySelector('.week-tabs').innerHTML = weekTabsElement.innerHTML;
-                        // Yeni gelen weekTabs HTML'i zaten Controller tarafından doğru haftayı (defaultWeek)
-                        // 'active' olarak işaretlemiş olmalıdır.
-                    }
-                })
-                .catch(error => {
-                    console.error('Hadis güncelleme hatası:', error);
-                    document.querySelector('.hadis-card').innerHTML = "<div class='hadis-content'><p>Hadis yüklenirken bir sorun oluştu.</p></div>";
-                });
+    const yearSelect = document.getElementById('yearSelect');
+    const monthSelect = document.getElementById('monthSelect');
+    const weekTabs = document.getElementById('weekTabs');
+    const languageTabs = document.getElementById('languageTabs');
+    const hadithCard = document.getElementById('hadithCard');
+
+    yearSelect?.addEventListener('change', async () => {
+        state.selectedYear = Number(yearSelect.value);
+        await refreshHadith(true);
+    });
+
+    monthSelect?.addEventListener('change', async () => {
+        state.selectedMonthId = Number(monthSelect.value);
+        await refreshHadith(true);
+    });
+
+    weekTabs?.addEventListener('click', async (event) => {
+        const button = event.target.closest('button[data-week]');
+        if (!button) return;
+        state.selectedWeekNumber = Number(button.dataset.week);
+        await refreshHadith(false);
+    });
+
+    languageTabs?.addEventListener('click', async (event) => {
+        const button = event.target.closest('button[data-language]');
+        if (!button) return;
+        state.selectedLanguageId = Number(button.dataset.language);
+        await refreshHadith(false);
+    });
+
+    async function refreshHadith(resetWeek) {
+        if (resetWeek) {
+            state.selectedWeekNumber = 1;
         }
 
-        // Dil sekmesi tıklandığında hadisi yeni dile göre günceller.
-        function changeLanguage(element, languageId) {
-            document.querySelectorAll('.language-tabs .nav-link').forEach(function(btn) {
-                btn.classList.remove('active');
-            });
-            element.classList.add('active');
+        const query = new URLSearchParams({
+            year: state.selectedYear,
+            month: state.selectedMonthId,
+            week: state.selectedWeekNumber,
+            languageId: state.selectedLanguageId
+        });
 
-            const year = document.getElementById('yearSelect').value;
-            const month = document.getElementById('monthSelect').value;
-            const activeWeekBtn = document.querySelector('.week-tabs .nav-link.active');
-
-            const week = activeWeekBtn ? activeWeekBtn.textContent.trim().split('.')[0] : 1;
-
-            fetch(`/Home/Index?year=${year}&month=${month}&week=${week}&languageId=${languageId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(data, 'text/html');
-                    const hadisCardElement = doc.querySelector('.hadis-card');
-                    if (hadisCardElement) {
-                        document.querySelector('.hadis-card').innerHTML = hadisCardElement.innerHTML;
-                    }
-                })
-                .catch(error => {
-                    console.error('Dil değiştirme hatası:', error);
-                    document.querySelector('.hadis-card').innerHTML = "<div class='hadis-content'><p>Hadis yüklenirken bir sorun oluştu.</p></div>";
-                });
+        const response = await fetch(`/Home/GetHadithData?${query.toString()}`);
+        if (!response.ok) {
+            hadithCard.innerHTML = '<div class="alert alert-danger mb-0">Veri alınamadı. Lütfen tekrar deneyin.</div>';
+            return;
         }
 
-        // Hafta sekmesi tıklandığında hadisi o haftaya göre günceller.
-        function selectWeek(element, weekNumber) {
-            document.querySelectorAll('.week-tabs .nav-link').forEach(function(btn) {
-                btn.classList.remove('active');
-            });
-            element.classList.add('active');
+        const data = await response.json();
+        state.selectedYear = data.selectedYear;
+        state.selectedMonthId = data.selectedMonthId;
+        state.selectedWeekNumber = data.selectedWeekNumber;
+        state.selectedLanguageId = data.selectedLanguageId;
 
-            const year = document.getElementById('yearSelect').value;
-            const month = document.getElementById('monthSelect').value;
-            const activeLangBtn = document.querySelector('.language-tabs .nav-link.active');
-            let languageId = 2; // Varsayılan Arapça
-            if (activeLangBtn) {
-                const onclickAttr = activeLangBtn.getAttribute('onclick');
-                const match = onclickAttr ? onclickAttr.match(/changeLanguage\(this,\s*(\d+)\)/) : null;
-                if (match && match[1]) {
-                    languageId = match[1];
-                }
-            }
+        renderSelectOptions(yearSelect, data.years, 'yearNumber', 'yearNumber', state.selectedYear);
+        renderSelectOptions(monthSelect, data.months, 'id', 'name', state.selectedMonthId);
+        renderChipGroup(weekTabs, data.weeks, 'weekNumber', state.selectedWeekNumber, 'week', value => `${value}. Hafta`);
+        renderChipGroup(languageTabs, data.languages, 'id', state.selectedLanguageId, 'language', value => data.languages.find(l => l.id === value).name);
 
-            fetch(`/Home/Index?year=${year}&month=${month}&week=${weekNumber}&languageId=${languageId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(data, 'text/html');
-                    const hadisCardElement = doc.querySelector('.hadis-card');
-                    if (hadisCardElement) {
-                        document.querySelector('.hadis-card').innerHTML = hadisCardElement.innerHTML;
-                    }
-                })
-                .catch(error => {
-                    console.error('Hafta seçme hatası:', error);
-                    document.querySelector('.hadis-card').innerHTML = "<div class='hadis-content'><p>Hadis yüklenirken bir sorun oluştu.</p></div>";
-                });
+        if (data.errorMessage) {
+            hadithCard.innerHTML = `<div class="alert alert-warning mb-0">${data.errorMessage}</div>`;
+            return;
         }
-    </script>
-</body>
-</html>
 
+        if (!data.hadith) {
+            hadithCard.innerHTML = '<div class="empty-state">Seçili filtreler için hadis bulunamadı.</div>';
+            return;
+        }
+
+        hadithCard.innerHTML = `
+            <div class="hadith-reference">${data.hadith.reference}</div>
+            <p class="hadith-content">${data.hadith.content}</p>
+        `;
+    }
+
+    function renderSelectOptions(selectEl, items, valueKey, textKey, selectedValue) {
+        if (!selectEl) return;
+        selectEl.innerHTML = items.map(item => {
+            const value = item[valueKey];
+            const selected = value === selectedValue ? 'selected' : '';
+            return `<option value="${value}" ${selected}>${item[textKey]}</option>`;
+        }).join('');
+    }
+
+    function renderChipGroup(container, items, valueKey, selectedValue, dataName, labelBuilder) {
+        if (!container) return;
+        container.innerHTML = items.map(item => {
+            const value = item[valueKey];
+            const active = value === selectedValue ? 'active' : '';
+            const label = labelBuilder(value);
+            return `<button type="button" class="chip-btn ${active}" data-${dataName}="${value}">${label}</button>`;
+        }).join('');
+    }
+</script>
+}
