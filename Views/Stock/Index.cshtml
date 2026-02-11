@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Stock Dashboard";
+}
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card p-3"><h6>Tenant</h6><h4>@ViewBag.TenantId</h4></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3"><h6>Ürün</h6><h4>@ViewBag.ProductCount</h4></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3"><h6>Müşteri</h6><h4>@ViewBag.CustomerCount</h4></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3"><h6>Sipariş</h6><h4>@ViewBag.OrderCount</h4></div>
+    </div>
+</div>
+
+<div class="card mt-3 p-3">
+    <h5>Toplam Stok Değeri</h5>
+    <h3>@(((decimal)ViewBag.StockValue).ToString("N2")) ₺</h3>
+</div>
+
+<div class="card mt-3 p-3">
+    <h5>Azalan Stoklar</h5>
+    <ul class="mb-0">
+        @foreach (var p in ViewBag.LowStockProducts)
+        {
+            <li>@p.Name - @p.StockQuantity</li>
+        }
+    </ul>
+</div>
+
+<div class="mt-3 d-flex gap-2">
+    <a class="btn btn-outline-primary" href="/Stock/Products">Ürünler</a>
+    <a class="btn btn-outline-primary" href="/Stock/Customers">Müşteriler</a>
+    <a class="btn btn-outline-primary" href="/Stock/Orders">Siparişler</a>
+</div>

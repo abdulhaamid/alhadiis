@@ -1,0 +1,56 @@
+@model List<Alhadis.Models.SalesOrder>
+@{
+    ViewData["Title"] = "Siparişler";
+    var customers = ViewBag.Customers as List<Alhadis.Models.Customer>;
+    var products = ViewBag.Products as List<Alhadis.Models.Product>;
+}
+
+@if (TempData["StockError"] != null)
+{
+    <div class="alert alert-danger">@TempData["StockError"]</div>
+}
+
+<div class="card p-3 mb-3">
+    <h5>Yeni Sipariş</h5>
+    <form asp-action="CreateOrder" method="post" class="row g-2">
+        @Html.AntiForgeryToken()
+        <div class="col-md-4">
+            <select class="form-select" name="CustomerId" required>
+                <option value="">Müşteri</option>
+                @foreach (var c in customers ?? new List<Alhadis.Models.Customer>())
+                {
+                    <option value="@c.Id">@c.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" name="ProductId" required>
+                <option value="">Ürün</option>
+                @foreach (var p in products ?? new List<Alhadis.Models.Product>())
+                {
+                    <option value="@p.Id">@p.Name (@p.StockQuantity)</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2"><input class="form-control" name="Quantity" type="number" min="1" placeholder="Adet" required /></div>
+        <div class="col-md-2"><button class="btn btn-success w-100">Oluştur</button></div>
+    </form>
+</div>
+
+<div class="card p-3">
+    <h5>Sipariş Geçmişi</h5>
+    <table class="table table-sm">
+        <thead><tr><th>No</th><th>Tarih</th><th>Müşteri</th><th>Tutar</th></tr></thead>
+        <tbody>
+        @foreach (var o in Model)
+        {
+            <tr>
+                <td>@o.OrderNumber</td>
+                <td>@o.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@o.Customer?.Name</td>
+                <td>@o.TotalAmount.ToString("N2")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
