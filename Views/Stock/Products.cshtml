@@ -1,0 +1,34 @@
+@model List<Alhadis.Models.Product>
+@{
+    ViewData["Title"] = "Ürünler";
+}
+
+@if (TempData["StockError"] != null)
+{
+    <div class="alert alert-danger">@TempData["StockError"]</div>
+}
+
+<div class="card p-3 mb-3">
+    <h5>Yeni Ürün</h5>
+    <form asp-action="AddProduct" method="post" class="row g-2">
+        @Html.AntiForgeryToken()
+        <div class="col-md-2"><input class="form-control" name="Code" placeholder="Kod" required /></div>
+        <div class="col-md-4"><input class="form-control" name="Name" placeholder="Ad" required /></div>
+        <div class="col-md-2"><input class="form-control" name="UnitPrice" placeholder="Fiyat" type="number" step="0.01" required /></div>
+        <div class="col-md-2"><input class="form-control" name="StockQuantity" placeholder="Stok" type="number" required /></div>
+        <div class="col-md-2"><button class="btn btn-primary w-100">Kaydet</button></div>
+    </form>
+</div>
+
+<div class="card p-3">
+    <h5>Ürün Listesi</h5>
+    <table class="table table-sm">
+        <thead><tr><th>Kod</th><th>Ad</th><th>Fiyat</th><th>Stok</th></tr></thead>
+        <tbody>
+        @foreach (var p in Model)
+        {
+            <tr><td>@p.Code</td><td>@p.Name</td><td>@p.UnitPrice.ToString("N2")</td><td>@p.StockQuantity</td></tr>
+        }
+        </tbody>
+    </table>
+</div>
